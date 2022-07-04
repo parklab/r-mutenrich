@@ -905,9 +905,9 @@ command.line.analysis <- function(init.enrich, genome, args=commandArgs(trailing
     if (!is.na(eobject$use.mutclass)) {
         cat('user specified mutation signature column name', eobject$use.mutclass, '\n')
         if (muts$muttype[1]  == 'snv') {
-            mcols(gmuts)[[eobject$use.mutclass]] <- scan2::sbs96(muts$mutsig)
+            GenomicRanges::mcols(gmuts)[[eobject$use.mutclass]] <- scan2::sbs96(muts$mutsig)
         } else if (muts$muttype[1] == 'indel') {
-            mcols(gmuts)[[eobject$use.mutclass]] <- scan2::id83(muts$mutsig)
+            GenomicRanges::mcols(gmuts)[[eobject$use.mutclass]] <- scan2::id83(muts$mutsig)
         } else {
             stop('expected either type.and.ctx (SNVs) or muttype (indels) in mutation object\n')
         }
