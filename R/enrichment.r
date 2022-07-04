@@ -887,7 +887,7 @@ command.line.analysis <- function(init.enrich, genome, args=commandArgs(trailing
             summaryoutfile))
 
     cat("Getting genome", genome, "\n")
-    genome <- GenomeInfoDb::Seqinfo(genome)
+    genome <- GenomeInfoDb::Seqinfo(genome=genome)
 
     eobject <- init.enrich(genome, inputdata)
 
