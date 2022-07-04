@@ -306,7 +306,7 @@ read.bed <- function(bedfile, genome, granges.extend, feature.name=ifelse(is.qbe
     # Dummy construction, just to check seqinfo compatibility
     zzz <- GenomicRanges::GRanges(seqnames=bed[['chr']],
         ranges=IRanges::IRanges(start=bed[['start']], end=bed[['end']]))
-    GenomeInfoDb::checkCompatibleSeqinfo(zzz, GRanges(seqinfo=genome))
+    GenomeInfoDb::checkCompatibleSeqinfo(zzz, GenomicRanges::GRanges(seqinfo=genome))
     options(warn=0)
 
     # Real 
