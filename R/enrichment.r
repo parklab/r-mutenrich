@@ -771,12 +771,12 @@ evolcano <- function(emat, labels=rep('', nrow(emat)), annotate.labels=TRUE, cex
             ylim=c(0,4.5), xlab='Enrichment (or depletion) ratio (obs/exp)',
             ylab='Significance: -log10(p-value)', cex=cex, ...)
 
-    if (any(labels != '') & annotate.labels) {
-        z <- z[labels != '',]
-        basicPlotteR::addTextLabels(xCoords=z[,'enr'], yCoords=z[,'sig'],
-                    labels=labels[labels != ''], col.line=2,
-                    col.label=2, cex.label=0.9)
-    }
+    #if (any(labels != '') & annotate.labels) {
+        #z <- z[labels != '',]
+        #basicPlotteR::addTextLabels(xCoords=z[,'enr'], yCoords=z[,'sig'],
+                    #labels=labels[labels != ''], col.line=2,
+                    #col.label=2, cex.label=0.9)
+    #}
     abline(h=1, lty='dotted')
     abline(v=1, lty='dotted')
 }
@@ -899,21 +899,15 @@ command.line.analysis <- function(init.enrich, genome, args=commandArgs(trailing
             stop(paste('no variable name provided for mut.rda and file contains multiple objects:', ret))
     }
     muts <- get(mut.varname)
-    gmuts <- gr(muts, seqinfo=seqinfo(genome), add.chr.prefix=TRUE)
+    gmuts <- gr(muts, seqinfo=seqinfo(genome)) #, add.chr.prefix=TRUE)
     gmuts$perm.id <- 1
     # Automatically recognize ID83/SBS96 signatures from our data
     if (!is.na(eobject$use.mutclass)) {
         cat('user specified mutation signature column name', eobject$use.mutclass, '\n')
-        # a bunch of hackery to recognize our specific data structures
-        # SNVs use this colname
-        if ('type.and.ctx' %in% colnames(muts)) {
-            cat('detected SNV mutation signatures in "type.and.ctx" column; adding to mutation GRanges\n')
-            mcols(gmuts)[[eobject$use.mutclass]] <- scan2::sbs96(muts$type.and.ctx)
-        }
-        # indels use this one
-        else if ('muttype' %in% colnames(muts)) {
-            cat('detected indel mutation signatures in "muttype" column; adding to mutation GRanges\n')
-            mcols(gmuts)[[eobject$use.mutclass]] <- scan2::id83(muts$muttype)
+        if (muts$muttype[1]  == 'snv') {
+            mcols(gmuts)[[eobject$use.mutclass]] <- scan2::sbs96(muts$mutsig)
+        } else if (muts$muttype[1] == 'indel') {
+            mcols(gmuts)[[eobject$use.mutclass]] <- scan2::id83(muts$mutsig)
         } else {
             stop('expected either type.and.ctx (SNVs) or muttype (indels) in mutation object\n')
         }
@@ -927,7 +921,7 @@ command.line.analysis <- function(init.enrich, genome, args=commandArgs(trailing
             stop(paste('no variable name provided for mut.rda and file contains multiple objects:', ret))
     }
     zperml <- get(perm.varname)
-    seqlevels(zperml) <- paste0('chr', seqlevels(zperml))
+    #seqlevels(zperml) <- paste0('chr', seqlevels(zperml))
     # remove the extra reference so memory can be easily freed later
     # corner case: unless the variable name is 'zperml', which would remove
     # the reference we just created above.
