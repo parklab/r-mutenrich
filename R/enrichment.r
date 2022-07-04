@@ -316,18 +316,18 @@ read.bed <- function(bedfile, genome, granges.extend, feature.name=ifelse(is.qbe
     granges <- GenomicRanges::trim(granges)  # restrict intervals to the specified genome's contig sizes
 
     if (is.qbed) {
-        mcols(granges)[[feature.name]] <- ifelse(is.na(bed[[feature.name]]),
+        GenomicRanges::mcols(granges)[[feature.name]] <- ifelse(is.na(bed[[feature.name]]),
             'excluded', bed[[feature.name]])
     } else {
-        mcols(granges)[[feature.name]] <- bed[[feature.name]]
+        GenomicRanges::mcols(granges)[[feature.name]] <- bed[[feature.name]]
     }
 
     # Get the complement of the BED file's coverage.
     # setdiff - similar to gaps(), but does not add intervals for +/- strand
     outside <- GenomicRanges::setdiff(as(GenomeInfoDb::seqinfo(granges), 'GRanges'), granges)
-    mcols(outside)[[feature.name]] <- outside.name
+    GenomicRanges::mcols(outside)[[feature.name]] <- outside.name
     granges <- sort(c(granges, outside))
-    mcols(granges)[[feature.name]] <- as.factor(mcols(granges)[[feature.name]])
+    GenomicRanges::mcols(granges)[[feature.name]] <- as.factor(GenomicRanges::mcols(granges)[[feature.name]])
 
     # Now that the GRanges object is fully constructed, compare it to
     # the user-supplied one to ensure they are identical before merging.
@@ -344,7 +344,7 @@ read.bed <- function(bedfile, genome, granges.extend, feature.name=ifelse(is.qbe
                 stop(paste('tried to extend GRanges object by BED file',
                     bedfile, ', but BED file has different intervals'))
         }
-        mcols(granges.extend)[[feature.name]] <- mcols(granges)[[feature.name]]
+        GenomicRanges::mcols(granges.extend)[[feature.name]] <- GenomicRanges::mcols(granges)[[feature.name]]
         granges <- granges.extend
     } else {
         cat("Precomputing GNCList for BED.\n")
