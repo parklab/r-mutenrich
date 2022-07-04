@@ -306,13 +306,13 @@ read.bed <- function(bedfile, genome, granges.extend, feature.name=ifelse(is.qbe
     # Dummy construction, just to check seqinfo compatibility
     zzz <- GenomicRanges::GRanges(seqnames=bed[['chr']],
         ranges=IRanges::IRanges(start=bed[['start']], end=bed[['end']]))
-    GenomeInfoDb::checkCompatibleSeqinfo(zzz, genome)
+    GenomeInfoDb::checkCompatibleSeqinfo(zzz, GRanges(seqinfo=genome))
     options(warn=0)
 
     # Real 
     granges <- GenomicRanges::GRanges(seqnames=bed[['chr']],
         ranges=IRanges::IRanges(start=bed[['start']], end=bed[['end']]),
-        seqinfo=GenomeInfoDb::seqinfo(genome))
+        seqinfo=genome)
     granges <- GenomicRanges::trim(granges)  # restrict intervals to the specified genome's contig sizes
 
     if (is.qbed) {
@@ -887,7 +887,7 @@ command.line.analysis <- function(init.enrich, genome, args=commandArgs(trailing
             summaryoutfile))
 
     cat("Getting genome", genome, "\n")
-    genome <- BSgenome::getBSgenome(genome)
+    genome <- GenomeInfoDb::Seqinfo(genome)
 
     eobject <- init.enrich(genome, inputdata)
 
@@ -899,7 +899,7 @@ command.line.analysis <- function(init.enrich, genome, args=commandArgs(trailing
             stop(paste('no variable name provided for mut.rda and file contains multiple objects:', ret))
     }
     muts <- get(mut.varname)
-    gmuts <- gr(muts, seqinfo=seqinfo(genome)) #, add.chr.prefix=TRUE)
+    gmuts <- gr(muts, seqinfo=genome) #, add.chr.prefix=TRUE)
     gmuts$perm.id <- 1
     # Automatically recognize ID83/SBS96 signatures from our data
     if (!is.na(eobject$use.mutclass)) {
