@@ -75,7 +75,7 @@ map.and.count <- function(grl, edata, verbose=1, target.k=10) {
         } else {
             # new: data.table is just being used to efficiently split 'to' by 'from'
             mapping <- data.table::data.table(perm.id=thisg$perm.id[S4Vectors::from(ols)],
-                mutclass=mcols(thisg)[[edata$use.mutclass]][S4Vectors::from(ols)],
+                mutclass=GenomicRanges::mcols(thisg)[[edata$use.mutclass]][S4Vectors::from(ols)],
                 to=S4Vectors::to(ols))
             if (verbose > 1) { print(mapping); print(gc()) }
             new.block <- mapping[,
@@ -214,7 +214,7 @@ features <- function(en, edata, feat.name) {
 
     if (!(feat.name %in% attr(edata$gbed, 'feature.set')))
         stop(paste0('requested feature named "', feat.name, '", but no such feature in feature.set. Current feature set:', attr(edata$gbed, 'feature.set')))
-    mcols(edata$gbed)[[feat.name]]
+    GenomicRanges::mcols(edata$gbed)[[feat.name]]
 }
 
 # Interface for enrichment analysis. At the minimum, requires
@@ -568,7 +568,7 @@ collapse <- function(en, classes.to.collapse=list(), keep.old.classes=FALSE) {
         oldclasses <- classes.to.collapse[[i]]
         gbed <- en$edata$gbed
         fname <- attr(gbed, 'feature.name')
-        g <- gbed[mcols(gbed)[[fname]] %in% oldclasses,]
+        g <- gbed[GenomicRanges::mcols(gbed)[[fname]] %in% oldclasses,]
         g$feature <- newclass
         # Currently a GNCList. Need to coerce back to GRanges and recompute GNCList
         as(g, 'GRanges')
