@@ -571,7 +571,7 @@ collapse <- function(en, feature, classes.to.collapse=list(), keep.old.classes=F
     en$last.gbed <- en$edata$gbed
     new.gbed <- do.call(c, lapply(1:length(classes.to.collapse), function(i) {
         newclass <- names(classes.to.collapse)[i]
-        oldclasses <- sub(paste0(feature, '|||'), '', classes.to.collapse[[i]])
+        oldclasses <- sub(paste0(feature, '\\|\\|\\|'), '', classes.to.collapse[[i]])
         gbed <- en$edata$gbed
         g <- gbed[GenomicRanges::mcols(gbed)[[feature]] %in% oldclasses,]
         g$feature <- newclass
