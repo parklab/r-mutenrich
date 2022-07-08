@@ -548,16 +548,18 @@ collapse <- function(en, classes.to.collapse=list(), keep.old.classes=FALSE) {
         newclass <- names(classes.to.collapse)[i]
         sumclasses <- classes.to.collapse[[i]]
 
-        en$perm.mat[[newclass]] <- rowSums(en$perm.mat[,sumclasses,drop=F])
+        en$perm.mat[[newclass]] <- rowSums(en$perm.mat[,..sumclasses,drop=F])
         en$real.obs[newclass] <- sum(en$real.obs[sumclasses])
-        en$boots[[newclass]] <- rowSums(en$boots[,sumclasses,drop=F])
+        en$boots[[newclass]] <- rowSums(en$boots[,..sumclasses,drop=F])
     }
     # Now remove old classes if the user specified it
     if (!keep.old.classes) {
         classes.to.remove <- unlist(classes.to.collapse)
-        en$perm.mat <- en$perm.mat[,!(colnames(en$perm.mat) %in% classes.to.remove),drop=F]
+        classes.to.keep <- setdiff(colnames(en$perm.mat), classes.to.remove)
+        en$perm.mat <- en$perm.mat[,..classes.to.keep]
         en$real.obs <- en$real.obs[!(names(en$real.obs) %in% classes.to.remove)]
-        en$boots <- en$boots[,!(colnames(en$boots) %in% classes.to.remove),drop=F]
+        classes.to.keep <- setdiff(colnames(en$boots), classes.to.remove)
+        en$boots <- en$boots[,..classes.to.keep]
     }
 
     # Update the gbed with new classes
