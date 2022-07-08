@@ -579,7 +579,7 @@ collapse <- function(en, feature, classes.to.collapse=list(), keep.old.classes=F
         as(g, 'GRanges')
     }))
     new.gbed <- GenomicRanges::GNCList(sort(GenomeInfoDb::sortSeqlevels(new.gbed)))
-    #attr(new.gbed, 'feature.name') <- attr(en$last.gbed, 'feature.name')
+    attr(new.gbed, 'feature.set') <- attr(en$last.gbed, 'feature.set')
     en$edata$gbed <- new.gbed
     en
 }
