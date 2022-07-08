@@ -539,6 +539,8 @@ subset <- function(en, fts) {
 # keep.old.classes - remove ALL classes in classes.to.collapse. New classes
 #     are created before removing any classes in classes.to.collapse.
 collapse <- function(en, feature, classes.to.collapse=list(), keep.old.classes=FALSE) {
+    if (!(feature %in% en$feature.set))
+        stop(paste('unrecognized feature', feature))
     classes.to.collapse <- lapply(classes.to.collapse, function(x) paste0(feature, '|||', x))
 
     if (any(names(classes.to.collapse %in% names(en$real.obs))))
