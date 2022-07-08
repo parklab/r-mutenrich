@@ -538,7 +538,9 @@ subset <- function(en, fts) {
 #     but some other functions do assume this (e.g., compute.outside).
 # keep.old.classes - remove ALL classes in classes.to.collapse. New classes
 #     are created before removing any classes in classes.to.collapse.
-collapse <- function(en, classes.to.collapse=list(), keep.old.classes=FALSE) {
+collapse <- function(en, feature, classes.to.collapse=list(), keep.old.classes=FALSE) {
+    classes.to.collapse <- lapply(classes.to.collapse, function(x) paste0(feature, '|||', x))
+
     if (any(names(classes.to.collapse %in% names(en$real.obs))))
         stop('new classes created by classes.to.collapse must not have the same name as any class already in e')
 
@@ -567,16 +569,15 @@ collapse <- function(en, classes.to.collapse=list(), keep.old.classes=FALSE) {
     en$last.gbed <- en$edata$gbed
     new.gbed <- do.call(c, lapply(1:length(classes.to.collapse), function(i) {
         newclass <- names(classes.to.collapse)[i]
-        oldclasses <- classes.to.collapse[[i]]
+        oldclasses <- sub(paste0(feature, '|||'), '', classes.to.collapse[[i]])
         gbed <- en$edata$gbed
-        fname <- attr(gbed, 'feature.name')
-        g <- gbed[GenomicRanges::mcols(gbed)[[fname]] %in% oldclasses,]
+        g <- gbed[GenomicRanges::mcols(gbed)[[feature]] %in% oldclasses,]
         g$feature <- newclass
         # Currently a GNCList. Need to coerce back to GRanges and recompute GNCList
         as(g, 'GRanges')
     }))
     new.gbed <- GenomicRanges::GNCList(sort(GenomeInfoDb::sortSeqlevels(new.gbed)))
-    attr(new.gbed, 'feature.name') <- attr(en$last.gbed, 'feature.name')
+    #attr(new.gbed, 'feature.name') <- attr(en$last.gbed, 'feature.name')
     en$edata$gbed <- new.gbed
     en
 }
