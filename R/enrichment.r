@@ -574,7 +574,7 @@ collapse <- function(en, feature, classes.to.collapse=list(), keep.old.classes=F
         oldclasses <- sub(paste0(feature, '\\|\\|\\|'), '', classes.to.collapse[[i]])
         gbed <- en$edata$gbed
         g <- gbed[GenomicRanges::mcols(gbed)[[feature]] %in% oldclasses,]
-        g$feature <- newclass
+        GenomicRanges::mcols(g)[[feature]] <- newclass
         # Currently a GNCList. Need to coerce back to GRanges and recompute GNCList
         as(g, 'GRanges')
     }))
