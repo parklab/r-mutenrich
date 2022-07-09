@@ -336,7 +336,7 @@ read.bed <- function(bedfile, genome, granges.extend,
     GenomicRanges::mcols(granges)[[feature.name]] <- as.factor(GenomicRanges::mcols(granges)[[feature.name]])
 
     if (primary.contigs.only)
-        granges <- granges[seqnames(granges) %in% c(1:22, 'X', 'Y', 'MT')]
+        granges <- granges[GenomicRanges::seqnames(granges) %in% c(1:22, 'X', 'Y', 'MT')]
 
     # Now that the GRanges object is fully constructed, compare it to
     # the user-supplied one to ensure they are identical before merging.
