@@ -337,7 +337,9 @@ read.bed <- function(bedfile, genome, granges.extend,
 
     if (primary.contigs.only) {
         # use the first element in granges to figure out if a 'chr' prefix is present
-        chr.prefix <- 'chr' if substr(GenomicRanges::seqnames(granges)[1], 1, 3) == 'chr' else ''
+        chr.prefix <- ''
+        if (substr(GenomicRanges::seqnames(granges)[1], 1, 3) == 'chr')
+            chr.prefix <- 'chr'
         primary.contigs <- paste0(chr.prefix, c(1:22, 'X', 'Y', 'MT'))
         primary <- as(GenomeInfoDb::Seqinfo(genome=genome)[primary.contigs], 'GRanges')
         granges <- GenomicRanges::subsetByOverlaps(granges, primary)
