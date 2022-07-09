@@ -332,10 +332,10 @@ read.bed <- function(bedfile, genome, granges.extend, feature.name=ifelse(is.qbe
     # Now that the GRanges object is fully constructed, compare it to
     # the user-supplied one to ensure they are identical before merging.
     if (!missing(granges.extend)) {
-        if (!all(seqnames(granges) == seqnames(granges.extend)) |
-            !all(start(granges) == start(granges.extend)) |
-            !all(end(granges) == end(granges.extend)) |
-            !all(strand(granges) == strand(granges.extend))) {
+        if (!all(GenomicRanges::seqnames(granges) == GenomicRanges::seqnames(granges.extend)) |
+            !all(GenomicRanges::start(granges) == GenomicRanges::start(granges.extend)) |
+            !all(GenomicRanges::end(granges) == GenomicRanges::end(granges.extend)) |
+            !all(GenomicRanges::strand(granges) == GenomicRanges::strand(granges.extend))) {
                 cat('----- old GRanges ------\n')
                 print(granges.extend)
                 cat('----- new GRanges ------\n')
