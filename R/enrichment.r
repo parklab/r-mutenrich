@@ -341,8 +341,8 @@ read.bed <- function(bedfile, genome, granges.extend,
         if (substr(GenomicRanges::seqnames(granges)[1], 1, 3) == 'chr')
             chr.prefix <- 'chr'
         primary.contigs <- paste0(chr.prefix, c(1:22, 'X', 'Y', 'MT'))
-        primary <- as(GenomeInfoDb::Seqinfo(genome)[primary.contigs], 'GRanges')
-        granges <- GenomicRanges::subsetByOverlaps(granges, primary)
+        primary <- as(genome[primary.contigs], 'GRanges')
+        granges <- IRanges::subsetByOverlaps(granges, primary)
     }
 
     # Now that the GRanges object is fully constructed, compare it to
