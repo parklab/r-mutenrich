@@ -265,7 +265,13 @@ read.bed.metadata <- function(bedfile, is.qbed=FALSE) {
 #           Useful for constructing multi-feature enrichment analyses.
 # has.metaline - the first line of the BED file is a #-prefixed single
 #           line of KEY=VALUE pairs of metadata
-read.bed <- function(bedfile, genome, granges.extend, feature.name=ifelse(is.qbed, 'quantile', 'feature'), add.chr.prefix=FALSE, remove.chr.prefix=TRUE, is.qbed=FALSE, has.metaline=FALSE) {
+# primary.contigs.only - restrict all GRanges (esp. when adding "outside"
+#           intervals) to human chrs 1-22, X, Y, MT.
+read.bed <- function(bedfile, genome, granges.extend,
+    feature.name=ifelse(is.qbed, 'quantile', 'feature'),
+    primary.contigs.only=TRUE,
+    add.chr.prefix=FALSE, remove.chr.prefix=TRUE, is.qbed=FALSE,
+    has.metaline=FALSE) {
     # data.table's fread is often faster than read.table
     # make sure this new feature name won't collide with any old feature
     if (!missing(granges.extend)) {
@@ -328,6 +334,9 @@ read.bed <- function(bedfile, genome, granges.extend, feature.name=ifelse(is.qbe
     GenomicRanges::mcols(outside)[[feature.name]] <- outside.name
     granges <- sort(c(granges, outside))
     GenomicRanges::mcols(granges)[[feature.name]] <- as.factor(GenomicRanges::mcols(granges)[[feature.name]])
+
+    if (primary.contigs.only)
+        granges <- granges[seqnames(granges) %in% c(1:22, 'X', 'Y', 'MT')]
 
     # Now that the GRanges object is fully constructed, compare it to
     # the user-supplied one to ensure they are identical before merging.
