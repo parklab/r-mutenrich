@@ -335,8 +335,13 @@ read.bed <- function(bedfile, genome, granges.extend,
     granges <- sort(c(granges, outside))
     GenomicRanges::mcols(granges)[[feature.name]] <- as.factor(GenomicRanges::mcols(granges)[[feature.name]])
 
-    if (primary.contigs.only)
-        granges <- granges[GenomicRanges::seqnames(granges) %in% c(1:22, 'X', 'Y', 'MT'),]
+    if (primary.contigs.only) {
+        # use the first element in granges to figure out if a 'chr' prefix is present
+        chr.prefix <- 'chr' if substr(GenomicRanges::seqnames(granges)[1], 1, 3) == 'chr' else ''
+        primary.contigs <- paste0(chr.prefix, c(1:22, 'X', 'Y', 'MT'))
+        primary <- as(GenomeInfoDb::Seqinfo(genome=genome)[primary.contigs], 'GRanges')
+        granges <- GenomicRanges::subsetByOverlaps(granges, primary)
+    }
 
     # Now that the GRanges object is fully constructed, compare it to
     # the user-supplied one to ensure they are identical before merging.
