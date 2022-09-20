@@ -208,7 +208,7 @@ features <- function(en, edata, feat.name) {
     if (missing(feat.name)) {
         feats <- feature.set(edata=edata)
         if (length(feats) > 1)
-            warn(paste('feat.name not specified, but feature set contains', length(feats), 'features. Using first feature.'))
+            warning(paste('feat.name not specified, but feature set contains', length(feats), 'features. Using first feature.'))
         feat.name <- feats[1]
     }
 
