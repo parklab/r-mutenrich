@@ -868,7 +868,10 @@ boxp <- function(l, add.points=TRUE, asts.at=NA, ...) {
 #     implement different command line options and then reshape the
 #     args in the way command.line.analysis expects.
 # genome - the name of a locally installed BSgenome
-command.line.analysis <- function(init.enrich, genome, args=commandArgs(trailingOnly=TRUE)) {
+# mut.file.is.rda - previously supplied mutation table as an RDA file.
+#     that's unnecessarily complicated, so now we expect an fread()able
+#     .csv file unless mut.file.is.rda=TRUE.
+command.line.analysis <- function(init.enrich, genome, args=commandArgs(trailingOnly=TRUE), mut.file.is.rda=FALSE) {
     if (length(args) < 6) {
         cat("Got command args:\n")
         print(args)
@@ -912,14 +915,19 @@ command.line.analysis <- function(init.enrich, genome, args=commandArgs(trailing
 
     eobject <- init.enrich(genome, inputdata)
 
-    ret <- load(mutfile, verb=T)
-    if (is.na(mut.varname)) {
-        if (length(ret) == 1)
-            mut.varname <- ret
-        else
-            stop(paste('no variable name provided for mut.rda and file contains multiple objects:', ret))
+    if (mut.file.is.rda) {
+        ret <- load(mutfile, verb=T)
+        if (is.na(mut.varname)) {
+            if (length(ret) == 1)
+                mut.varname <- ret
+            else
+                stop(paste('no variable name provided for mut.rda and file contains multiple objects:', ret))
+        }
+        muts <- get(mut.varname)
+    } else {
+        # Mut file is just a .CSV
+        muts <- fread(mutfile)
     }
-    muts <- get(mut.varname)
     gmuts <- gr(muts, seqinfo=genome) #, add.chr.prefix=TRUE)
     gmuts$perm.id <- 1
     # Automatically recognize ID83/SBS96 signatures from our data
@@ -939,7 +947,7 @@ command.line.analysis <- function(init.enrich, genome, args=commandArgs(trailing
         if (length(ret) == 1)
             perm.varname <- ret
         else
-            stop(paste('no variable name provided for mut.rda and file contains multiple objects:', ret))
+            stop(paste('no variable name provided for perms.rda and file contains multiple objects:', ret))
     }
     zperml <- get(perm.varname)
     #seqlevels(zperml) <- paste0('chr', seqlevels(zperml))
