@@ -924,8 +924,14 @@ command.line.analysis <- function(init.enrich, genome, args=commandArgs(trailing
         stop(sprintf("output file %s already exists, please delete it first",
             summaryoutfile))
 
-    cat("Getting genome", genome, "\n")
-    genome <- GenomeInfoDb::Seqinfo(genome=genome)
+    if (is.character(genome)) {
+        cat("Getting genome", genome, "\n")
+        genome <- GenomeInfoDb::Seqinfo(genome=genome)
+    } else if (class(g) == "Seqinfo") {
+        cat("Using supplied seqinfo genome object..\n")
+    } else {
+        stop("genome must be either a character or Seqinfo object")
+    }
 
     eobject <- init.enrich(genome, inputdata)
 
