@@ -228,9 +228,23 @@ enrich.data <- function(count.fn=count.feature, map.fn=map.feature, use.mutclass
 }
 
 
-read.bed.metadata <- function(bedfile, is.qbed=FALSE) {
-    line <- readLines(bedfile, n=1)
+read.bed.metadata <- function(bedfile, string, return.line=FALSE, is.qbed=FALSE) {
+    if (!missing(bedfile) & !missing(string))
+        stop('exactly one of `bedfile` or `string` must be specified')
+
+    if (!missing(bedfile)) {
+        line <- readLines(bedfile, n=1)
+        file.name <- bedfile
+    } else if (!missing(string)) {
+        line <- string
+        file.name <- "string"
+    }
+
     line <- sub('^#', '', line) # delete leading #comment character
+
+    if (return.line)
+        return(line)
+
     meta <- sapply(strsplit(line, ';')[[1]], function(x) {
         x <- strsplit(x, '=')[[1]]
         setNames(x[2], x[1])
@@ -242,7 +256,7 @@ read.bed.metadata <- function(bedfile, is.qbed=FALSE) {
             stop(paste("using unrecognized QBED file version", meta['QBED_VERSION']))
     }
     ret <- data.frame(t(meta[names(meta) != 'QBED_VERSION']))
-    rownames(ret) <- bedfile
+    rownames(ret) <- file.name
     ret
 }
 
